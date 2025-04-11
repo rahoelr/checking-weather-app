@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Cek Cuaca</title>
+    <title>Cek Cuaca</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -36,7 +36,7 @@
             <!-- Form Pencarian -->
             <div id="searchForm" class="bg-slate-900/80 backdrop-blur-lg rounded-xl p-8 shadow-2xl border border-slate-700/50">
                 <h1 class="text-4xl font-bold text-white text-center mb-8 title-font tracking-tight">
-                    Aplikasi Cek Cuaca
+                    Cek Cuaca
                 </h1>
                 <div class="mb-8">
                     <div class="flex gap-3 justify-center">
@@ -66,13 +66,14 @@
                     </svg>
                     <p id="loadingPercentage" class="text-white text-2xl mt-4 title-font">0%</p>
                     <p class="text-white mt-2">Sedang mengecek data cuaca...</p>
+                    <p id="loadingMessage" class="text-white/70 mt-2 text-sm"></p>
                 </div>
             </div>
 
             <!-- Pesan Hasil -->
             <div id="resultMessage" class="hidden bg-slate-900/80 backdrop-blur-lg rounded-xl p-8 shadow-2xl border border-slate-700/50 text-center">
                 <div class="text-center">
-                    <h2 class="text-5xl font-bold text-white mb-6 title-font leading-tight">Silahkan cek sendiri keluar, jangan males 😤</h2>
+                    <h2 class="text-5xl font-bold text-white mb-6 title-font leading-tight">Silahkan cek sendiri ke luar, jangan males</h2>
                     <p class="text-red-400 text-2xl mb-6">😤 Jangan males! 😤</p>
                     <button onclick="resetSearch()" 
                             class="mt-4 bg-pink-600 px-6 py-3 rounded-lg text-white hover:bg-pink-700 transition-all duration-300 font-bold">
@@ -89,6 +90,17 @@
     </div>
 
     <script>
+        const loadingMessages = [
+            "Menghubungi satelit cuaca...",
+            "Menganalisis pola awan...",
+            "Mengukur kelembaban udara...",
+            "Menghitung kecepatan angin...",
+            "Memeriksa suhu permukaan...",
+            "Mengumpulkan data historis...",
+            "Memproses data meteorologi...",
+            "Menyinkronkan data global..."
+        ];
+
         function setProgress(percent) {
             const circle = document.querySelector('.progress-ring__circle');
             const radius = circle.r.baseVal.value;
@@ -97,6 +109,12 @@
             const offset = circumference - (percent / 100 * circumference);
             circle.style.strokeDashoffset = offset;
             document.getElementById('loadingPercentage').textContent = `${percent}%`;
+            
+            // Update loading message
+            if (percent % 12 === 0) {
+                const messageIndex = Math.floor(percent / 12) % loadingMessages.length;
+                document.getElementById('loadingMessage').textContent = loadingMessages[messageIndex];
+            }
         }
 
         function checkWeather() {
@@ -109,7 +127,7 @@
 
             let progress = 0;
             const interval = setInterval(() => {
-                progress += 2;
+                progress += 1; // Slower progress
                 setProgress(progress);
                 
                 if (progress >= 100) {
@@ -119,7 +137,7 @@
                         resultMessage.classList.remove('hidden');
                     }, 500);
                 }
-            }, 40);
+            }, 100); // Longer interval between updates
         }
 
         function resetSearch() {
